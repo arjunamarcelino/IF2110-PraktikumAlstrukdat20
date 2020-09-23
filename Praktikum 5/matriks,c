@@ -2,8 +2,8 @@
 /*    Nama		: Arjuna Marcelino */
 /*    Tanggal		: 21 September 2020 */
 /*    Topik praktikum	: Pra-Praktikum 5 */
-/*    Deskripsi	: Program mengenai matriks dan mengolah matriks */		
-/*    Nama file	: matriks.c */
+/*    Deskripsi		: Program mengenai matriks dan mengolah matriks */		
+/*    Nama file		: matriks.c */
 
 #include "stdio.h"
 #include "matriks.h"
@@ -78,6 +78,8 @@ void CopyMATRIKS (MATRIKS MIn, MATRIKS * MHsl)
 			Elmt(*MHsl,i,j)=Elmt(MIn,i,j);
 		}
 	}
+	NBrsEff(*MHsl) = NBrsEff(MIn);
+	NKolEff(*MHsl) = NKolEff(MIn);
 }
 
 
@@ -428,33 +430,39 @@ float Determinan (MATRIKS M)
 	if((NBrsEff(M)==2) && (NKolEff(M)==2))
 	{
 		det = (Elmt(M,0,0)*Elmt(M,1,1)) - (Elmt(M,0,1)*Elmt(M,1,0));
+		return det;
 	}
 	else
 	{
 		for (k=GetFirstIdxKol(M); k<= GetLastIdxKol(M); k++)
 		{
-			for (j=GetFirstIdxBrs(M)+1; i<=GetLastIdxBrs(M); i++)
+			for (i=GetFirstIdxBrs(M)+1; i<=GetLastIdxBrs(M); i++)
 			{
-				if(j>k)
+				for (j=GetFirstIdxKol(M); j<= GetLastIdxKol(M); j++)
 				{
-					Elmt(MTemp,i-1,j-1) = Elmt (M,i,j);
-				}
-				else
-				{
-					Elmt(MTemp, i-1,j) = Elmt (M,i,j);
+					if(j>k)
+					{
+						Elmt(MTemp,i-1,j-1) = Elmt (M,i,j);
+					}
+					else
+					{
+						Elmt(MTemp, i-1,j) = Elmt (M,i,j);
+					}
 				}
 			}
+		
+			if (k%2==0)
+			{
+				det+= Elmt(M,0,k)*Determinan(MTemp);
+			}
+			else
+			{
+				det-= Elmt(M,0,k)*Determinan(MTemp);
+			}
 		}
-		if (k%2==0)
-		{
-			det+= Elmt(M,0,k)*Determinan(MTemp);
-		}
-		else
-		{
-			det-= Elmt(M,0,k)*Determinan(MTemp);
-		}
+		return det;
 	}
-	return det;
+	
 }
 
 void PInverse1 (MATRIKS * M)
